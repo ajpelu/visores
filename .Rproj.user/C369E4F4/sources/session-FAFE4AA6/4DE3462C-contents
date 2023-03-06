@@ -1,0 +1,73 @@
+library(tidyverse)
+library(raster)
+library(sf)
+library(leaflet)
+library(htmlwidgets) # HTML Widgets for R
+
+
+sn <- st_read(dsn = "data/sn_enp.shp", quiet = TRUE)
+snt <- st_transform(sn, 4326)
+
+mapita <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng=-3.311572, lat=37.053434, popup="Mulhacen") %>% 
+  addPolygons(data = snt,
+              group= 'Natural Park',
+              fillOpacity = 0, 
+              color = "blue") 
+
+saveWidget(mapita, "index.html")
+
+
+
+
+git add .
+
+
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/ajpelu/visores.git
+git push -u origin main
+
+
+
+
+
+
+
+
+mapita <- leaflet() %>% 
+  # Añadir capas 
+  addTiles() %>% # Open Street map
+  # Añadir otras capas 
+  addMarkers(lng=-3.311572, lat=37.053434, popup="Mulhacen") %>% 
+  addPolygons(data = sn,
+              group= 'Natural Park',
+              fillOpacity = 0, 
+              color = "blue") 
+
+
+
+
+
+
+
+
+
+
+
+
+mapita_final <-
+  mapita %>% 
+  addProviderTiles("Esri.WorldImagery", group = "Satellite (ESRI)") %>% 
+  addWMSTiles("http://www.ign.es/wms-inspire/pnoa-ma?", 
+              layers = 'OI.OrthoimageCoverage',
+              options = WMSTileOptions(format = "image/png", transparent = TRUE),
+              group = "PNOA") %>% 
+  addLayersControl(position = 'bottomright',
+                   baseGroups = c('Open Street Map','Satellite (ESRI)','PNOA'),
+                   overlayGroups = c('Natural Park'))
+
+mapita_final
+
